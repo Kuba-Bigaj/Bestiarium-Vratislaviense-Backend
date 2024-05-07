@@ -1,0 +1,13 @@
+package pl.edu.pwr.bestiariumvratislaviensebackend;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class BestiariumVratislavienseBackendApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(BestiariumVratislavienseBackendApplication.class, args);
+    }
+
+}
