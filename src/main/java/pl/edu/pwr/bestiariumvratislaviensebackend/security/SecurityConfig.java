@@ -43,9 +43,13 @@ public class SecurityConfig {
                 .exceptionHandling((exeptionHandling) -> exeptionHandling.authenticationEntryPoint(authEntryPoint))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
-                                .requestMatchers("/login").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/user").permitAll()
-                                .anyRequest().authenticated())
+                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/user").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/stories").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/stories/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/ranking").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/creatures").permitAll()
+                        .anyRequest().authenticated())
                 .httpBasic(withDefaults());
 
         http.addFilterBefore(webApplicationContext.getBean(JWTAuthenticationFilter.class), UsernamePasswordAuthenticationFilter.class);
