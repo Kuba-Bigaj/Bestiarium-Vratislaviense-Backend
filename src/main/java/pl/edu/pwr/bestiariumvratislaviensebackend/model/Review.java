@@ -4,27 +4,26 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.Instant;
-import java.util.Set;
 
 @Data
 @Entity
-@Table(name = "cryptids")
-public class Cryptid {
+@Table(name = "reviews")
+public class Review {
     @Id
     @GeneratedValue
     private Long id;
 
-    private String name;
-    private String flavor_text;
+    private String body;
+    private Double rating;
 
-    private String unlockCode;
+    @ManyToOne
+    private Seeker author;
+
+    @ManyToOne
+    private Story story;
 
     private Instant created;
     private Instant modified;
-
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable()
-    private Set<Story> stories;
 
     @PrePersist
     public void setCreated() {
@@ -35,5 +34,4 @@ public class Cryptid {
     public void setModified() {
         modified = Instant.now();
     }
-
 }

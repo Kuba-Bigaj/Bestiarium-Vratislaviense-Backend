@@ -23,6 +23,13 @@ public class Seeker {
     @JoinTable()
     private Set<Role> roles;
 
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable()
+    private Set<Cryptid> unlockedCryptids;
+
+    @OneToMany()
+    private Set<Review> reviews;
+
     private Instant created;
     private Instant modified;
 

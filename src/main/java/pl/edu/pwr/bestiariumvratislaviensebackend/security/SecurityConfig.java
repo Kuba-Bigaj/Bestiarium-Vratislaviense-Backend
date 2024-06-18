@@ -45,6 +45,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/user").permitAll()
+                        .requestMatchers("/error").permitAll()
                         .requestMatchers(HttpMethod.GET, "/stories").permitAll()
                         .requestMatchers(HttpMethod.GET, "/stories/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/ranking").permitAll()
