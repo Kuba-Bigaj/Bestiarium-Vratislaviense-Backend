@@ -1,24 +1,28 @@
 package pl.edu.pwr.bestiariumvratislaviensebackend.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import lombok.Getter;
+import jakarta.persistence.*;
 import org.springframework.data.annotation.Immutable;
+import lombok.Data;
 
+@Data
 @Entity
-@Getter
 @Immutable
+@Table(name = "RANKING_VIEW")
 public class RankingView {
     @Id
-    @GeneratedValue
-    Long id;
+    @Column(name = "id")
+    private Long id;
 
-    //TODO zaimplementować model i zrobić tu testy
+    @Column(name = "username")
+    private String username;
 
-    /**
-     * tu się dzieją skomplikowane rzeczy z ustanawaianiem widoków,
-     * łączeniem z samym soba (liczenie graczy lepszych od siebie) i ogólnie łączenie SQL z JPA
-     * do dalszych testów potrzebny będzie gotowy model
-     */
+    @Column(name = "cryptids_count")
+    private int creaturesCount;
+
+    @Column(name = "reviewsCount")
+    private int reviewsCount;
+
+    @Column(name = "rank")
+    private int rank;
+
 }

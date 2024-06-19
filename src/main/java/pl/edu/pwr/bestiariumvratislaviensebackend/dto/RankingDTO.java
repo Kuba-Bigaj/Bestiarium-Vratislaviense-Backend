@@ -3,11 +3,17 @@ package pl.edu.pwr.bestiariumvratislaviensebackend.dto;
 import lombok.Data;
 import pl.edu.pwr.bestiariumvratislaviensebackend.model.RankingView;
 
-import java.util.Collection;
-
 @Data
 public class RankingDTO {
-    Collection<RankingView> users;
-    Integer page;
-    Integer pagesAmount;
+    private int position;
+    private String name;
+    private int creaturesAmount;
+    private int reviewsAmount;
+
+    public RankingDTO(RankingView rankingView){
+        position = rankingView.getRank();
+        name=rankingView.getUsername();
+        creaturesAmount=rankingView.getCreaturesCount();
+        reviewsAmount=rankingView.getReviewsCount();
+    }
 }

@@ -2,38 +2,43 @@ package pl.edu.pwr.bestiariumvratislaviensebackend.controllers;
 
 import jakarta.persistence.EntityExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.edu.pwr.bestiariumvratislaviensebackend.dto.*;
 import pl.edu.pwr.bestiariumvratislaviensebackend.model.Cryptid;
+import pl.edu.pwr.bestiariumvratislaviensebackend.model.RankingView;
 import pl.edu.pwr.bestiariumvratislaviensebackend.model.Seeker;
 import pl.edu.pwr.bestiariumvratislaviensebackend.model.Story;
 import pl.edu.pwr.bestiariumvratislaviensebackend.repositories.CryptidRepository;
+import pl.edu.pwr.bestiariumvratislaviensebackend.repositories.RankingViewRepository;
 import pl.edu.pwr.bestiariumvratislaviensebackend.repositories.SeekerRepository;
-import pl.edu.pwr.bestiariumvratislaviensebackend.repositories.StoryRepository;
-import pl.edu.pwr.bestiariumvratislaviensebackend.security.SeekerDetailsService;
 import pl.edu.pwr.bestiariumvratislaviensebackend.services.CryptidService;
 import pl.edu.pwr.bestiariumvratislaviensebackend.services.ReviewService;
 import pl.edu.pwr.bestiariumvratislaviensebackend.services.StoryService;
+
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 @RestController
 public class ContentController {
     private final CryptidService cryptidService;
     private final StoryService storyService;
-    private final StoryRepository storyRepository;
     private final ReviewService reviewService;
     private final SeekerRepository seekerRepository;
     private final CryptidRepository cryptidRepository;
+    private final RankingViewRepository rankingViewRepository;
 
     @Autowired
-    public ContentController(CryptidService cryptidService, StoryService storyService, StoryRepository storyRepository, ReviewService reviewService, SeekerDetailsService seekerDetailsService, SeekerRepository seekerRepository, CryptidRepository cryptidRepository) {
+    public ContentController(CryptidService cryptidService, StoryService storyService, ReviewService reviewService, SeekerRepository seekerRepository, CryptidRepository cryptidRepository, RankingViewRepository rankingViewRepository) {
         this.cryptidService = cryptidService;
         this.storyService = storyService;
-        this.storyRepository = storyRepository;
         this.reviewService = reviewService;
         this.seekerRepository = seekerRepository;
         this.cryptidRepository = cryptidRepository;
+        this.rankingViewRepository = rankingViewRepository;
     }
 
     @GetMapping("/creatures")
@@ -62,11 +67,20 @@ public class ContentController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    //TODO VERY problematic
     @GetMapping("/ranking")
-    public ResponseEntity<RankingDTO> get_ranking(@RequestParam(defaultValue = "0") String page) {
+    public ResponseEntity<PageRankingDTO> get_ranking(@RequestParam(defaultValue = "0") String page, @RequestParam(defaultValue = "") String regex) {
         Integer page_num = Integer.parseInt(page);
-        RankingDTO response = new RankingDTO();
+
+        Page<RankingView> rankingPage = rankingViewRepository.findByUsernameContaining(regex, PageRequest.of(page_num, 10));
+
+        PageRankingDTO response = new PageRankingDTO();
+
+        response.setPage(rankingPage.getNumber());
+        response.setPagesAmount(rankingPage.getTotalPages());
+        response.setUsers(rankingPage.getContent().stream()
+                .map(RankingDTO::new)
+                .collect(Collectors.toSet()));
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
