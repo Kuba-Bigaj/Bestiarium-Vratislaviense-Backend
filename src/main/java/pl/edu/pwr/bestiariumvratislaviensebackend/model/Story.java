@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.time.Instant;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 
 @Data
@@ -18,7 +19,6 @@ public class Story {
     private String title;
     private String summary;
 
-    @Lob
     @Column(columnDefinition = "text")
     private String content;
 
@@ -32,6 +32,9 @@ public class Story {
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "stories")
     private Collection<Cryptid> cryptids;
 
+    @OneToMany(mappedBy = "story", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Review> reviews;
+
     private Instant created;
     private Instant modified;
 
@@ -43,5 +46,18 @@ public class Story {
     @PreUpdate
     public void setModified() {
         modified = Instant.now();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Story story = (Story) o;
+        return Objects.equals(id, story.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

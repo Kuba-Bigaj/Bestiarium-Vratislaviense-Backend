@@ -27,7 +27,7 @@ public class Seeker {
     @JoinTable()
     private Set<Cryptid> unlockedCryptids;
 
-    @OneToMany()
+    @OneToMany(mappedBy = "author")
     private Set<Review> reviews;
 
     private Instant created;

@@ -15,7 +15,9 @@ public class Cryptid {
     private Long id;
 
     private String name;
-    private String flavor_text;
+
+    private Double longitude;
+    private Double latitude;
 
     private String unlockCode;
 

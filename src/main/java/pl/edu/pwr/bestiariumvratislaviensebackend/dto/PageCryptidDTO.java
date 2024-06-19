@@ -7,7 +7,7 @@ import java.util.Collection;
 
 @Data
 public class PageCryptidDTO {
-    Collection<Cryptid> creatures;
+    Collection<CryptidDTO> creatures;
     Integer page;
     Integer pagesAmount;
 }

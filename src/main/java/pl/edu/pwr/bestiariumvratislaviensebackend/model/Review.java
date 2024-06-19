@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.Instant;
+import java.util.Objects;
 
 @Data
 @Entity
@@ -16,10 +17,12 @@ public class Review {
     private String body;
     private Double rating;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    //@JoinColumn(name = "author_id")
     private Seeker author;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    //@JoinColumn(name = "story_id", referencedColumnName = "id")
     private Story story;
 
     private Instant created;
@@ -33,5 +36,18 @@ public class Review {
     @PreUpdate
     public void setModified() {
         modified = Instant.now();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Review review = (Review) o;
+        return Objects.equals(id, review.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }
