@@ -19,7 +19,6 @@ import pl.edu.pwr.bestiariumvratislaviensebackend.services.CryptidService;
 import pl.edu.pwr.bestiariumvratislaviensebackend.services.ReviewService;
 import pl.edu.pwr.bestiariumvratislaviensebackend.services.StoryService;
 
-import java.util.Collection;
 import java.util.stream.Collectors;
 
 @RestController
@@ -69,7 +68,7 @@ public class ContentController {
 
     @GetMapping("/ranking")
     public ResponseEntity<PageRankingDTO> get_ranking(@RequestParam(defaultValue = "0") String page, @RequestParam(defaultValue = "") String regex) {
-        Integer page_num = Integer.parseInt(page);
+        int page_num = Integer.parseInt(page);
 
         Page<RankingView> rankingPage = rankingViewRepository.findByUsernameContaining(regex, PageRequest.of(page_num, 10));
 
