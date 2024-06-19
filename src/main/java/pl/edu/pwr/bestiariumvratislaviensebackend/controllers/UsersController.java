@@ -1,5 +1,6 @@
 package pl.edu.pwr.bestiariumvratislaviensebackend.controllers;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,15 +10,21 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import pl.edu.pwr.bestiariumvratislaviensebackend.dto.ReviewGetShortDTO;
 import pl.edu.pwr.bestiariumvratislaviensebackend.dto.SeekerDetailsDTO;
 import pl.edu.pwr.bestiariumvratislaviensebackend.dto.UserDTO;
 import pl.edu.pwr.bestiariumvratislaviensebackend.dto.UserResponseDTO;
+import pl.edu.pwr.bestiariumvratislaviensebackend.model.Cryptid;
 import pl.edu.pwr.bestiariumvratislaviensebackend.model.Role;
 import pl.edu.pwr.bestiariumvratislaviensebackend.model.Seeker;
+import pl.edu.pwr.bestiariumvratislaviensebackend.model.Story;
 import pl.edu.pwr.bestiariumvratislaviensebackend.repositories.SeekerRepository;
+import pl.edu.pwr.bestiariumvratislaviensebackend.repositories.StoryRepository;
 import pl.edu.pwr.bestiariumvratislaviensebackend.security.JWTGenerator;
 
+import java.util.Collection;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 @RestController
 public class UsersController {
@@ -25,13 +32,15 @@ public class UsersController {
     private final JWTGenerator jwtGenerator;
     private final SeekerRepository seekerRepository;
     private final PasswordEncoder passwordEncoder;
+    private final StoryRepository storyRepository;
 
     @Autowired
-    public UsersController(AuthenticationManager authenticationManager, JWTGenerator jwtGenerator, SeekerRepository seekerRepository, PasswordEncoder passwordEncoder) {
+    public UsersController(AuthenticationManager authenticationManager, JWTGenerator jwtGenerator, SeekerRepository seekerRepository, PasswordEncoder passwordEncoder, StoryRepository storyRepository, StoryRepository storyRepository1) {
         this.authenticationManager = authenticationManager;
         this.jwtGenerator = jwtGenerator;
         this.seekerRepository = seekerRepository;
         this.passwordEncoder = passwordEncoder;
+        this.storyRepository = storyRepository1;
     }
 
 
@@ -71,9 +80,19 @@ public class UsersController {
 
     @GetMapping("/user")
     public ResponseEntity<SeekerDetailsDTO> get_user_details(@RequestParam String userID) {
-        int id = Integer.parseInt(userID);
+        Long id = Long.parseLong(userID);
+        Seeker target = seekerRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+
+        Collection<Story> userStories = storyRepository.findByAuthorId(target.getId());
 
         SeekerDetailsDTO response = new SeekerDetailsDTO();
+        response.setName(target.getUsername());
+        response.setCreatures(target.getUnlockedCryptids().stream()
+                .map(Cryptid::getName).collect(Collectors.toSet()));
+        response.setReviews(target.getReviews().stream()
+                .map(ReviewGetShortDTO::new).collect(Collectors.toSet()));
+        response.setStories(userStories.stream().map(Story::getTitle).collect(Collectors.toSet()));
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

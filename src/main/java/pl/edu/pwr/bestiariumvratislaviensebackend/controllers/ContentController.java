@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.edu.pwr.bestiariumvratislaviensebackend.dto.*;
 import pl.edu.pwr.bestiariumvratislaviensebackend.model.Cryptid;
 import pl.edu.pwr.bestiariumvratislaviensebackend.model.Seeker;
+import pl.edu.pwr.bestiariumvratislaviensebackend.model.Story;
 import pl.edu.pwr.bestiariumvratislaviensebackend.repositories.CryptidRepository;
 import pl.edu.pwr.bestiariumvratislaviensebackend.repositories.SeekerRepository;
 import pl.edu.pwr.bestiariumvratislaviensebackend.repositories.StoryRepository;
@@ -22,7 +23,6 @@ public class ContentController {
     private final StoryService storyService;
     private final StoryRepository storyRepository;
     private final ReviewService reviewService;
-    private final SeekerDetailsService seekerDetailsService;
     private final SeekerRepository seekerRepository;
     private final CryptidRepository cryptidRepository;
 
@@ -32,7 +32,6 @@ public class ContentController {
         this.storyService = storyService;
         this.storyRepository = storyRepository;
         this.reviewService = reviewService;
-        this.seekerDetailsService = seekerDetailsService;
         this.seekerRepository = seekerRepository;
         this.cryptidRepository = cryptidRepository;
     }
@@ -71,10 +70,19 @@ public class ContentController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping("/story") //TODO
-    public ResponseEntity<StoryResponseDTO> post_story(@RequestBody StoryGetDTO story) {
+    @PostMapping("/story")
+    public ResponseEntity<StoryResponseDTO> post_story(@RequestBody StoryPostDTO story) {
+
+        Story product = storyService.addStory(story);
 
         StoryResponseDTO response = new StoryResponseDTO();
+        response.setId(product.getId());
+        response.setTitle(product.getTitle());
+        response.setAuthorID(product.getAuthor().getId());
+        response.setCreatureID(product.getCryptids().stream()
+                .findFirst().orElseThrow(EntityExistsException::new)
+                .getId());
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

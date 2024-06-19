@@ -4,8 +4,8 @@ import lombok.Data;
 
 @Data
 public class StoryResponseDTO {
-    private int id;
+    private Long id;
     private String title;
-    private int authorID;
-    private int creatureID;
+    private Long authorID;
+    private Long creatureID;
 }

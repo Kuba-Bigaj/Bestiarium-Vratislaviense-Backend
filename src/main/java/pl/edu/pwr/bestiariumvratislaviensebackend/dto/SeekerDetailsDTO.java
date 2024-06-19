@@ -8,5 +8,5 @@ public class SeekerDetailsDTO {
     private String name;
     private Collection<String> creatures;
     private Collection<String> stories;
-    private Collection<ReviewShortDTO> reviews;
+    private Collection<ReviewGetShortDTO> reviews;
 }
